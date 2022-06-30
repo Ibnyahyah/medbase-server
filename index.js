@@ -20,7 +20,7 @@ app.get("/", async (req, res) => {
   res.send("Welcome to server");
 });
 
-const PORT = 5000 || process.env.PORT;
+const PORT = process.env.PORT;
 
 mongoose
   .connect(process.env.CONNECTION_URL, {
