@@ -4,8 +4,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
-import DoctorsRoutes from "./routes/doctors.js";
+import UsersRoutes from "./routes/users.js";
 import AdminsRoutes from "./routes/admins.js";
+import RecordsRoutes from "./routes/records.js";
+import CommentsRoutes from "./routes/comment.js";
 // config
 
 dotenv.config();
@@ -13,8 +15,10 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use("/api/v1/auth", DoctorsRoutes);
+app.use("/api/v1/auth", UsersRoutes);
 app.use("/api/v1/admin", AdminsRoutes);
+app.use("/api/v1/records", RecordsRoutes);
+app.use("/api/v1/comment", CommentsRoutes);
 
 app.get("/", async (req, res) => {
   res.send("Welcome to server");

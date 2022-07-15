@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-const doctorSchema = new mongoose.Schema(
+
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -10,6 +11,13 @@ const doctorSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
+    },
+    role: {
+      type: String,
+    },
+    refreshTokens: {
+      type: Array,
+      default: [],
     },
     password: {
       type: String,
@@ -25,4 +33,4 @@ const doctorSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Doctor", doctorSchema);
+export default mongoose.model("user", userSchema);
