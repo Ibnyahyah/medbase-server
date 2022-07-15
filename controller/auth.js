@@ -33,7 +33,7 @@ export const refreshToken = (req, res) => {
 };
 
 export const signup = async (req, res) => {
-  const { email, password, name, phone, confirmPassword } = req.body;
+  const { email, password, name, phone, confirmPassword, role } = req.body;
 
   try {
     const exitingUser = await user.findOne({ email });
@@ -51,6 +51,7 @@ export const signup = async (req, res) => {
       password: hashedPassword,
       name,
       phone,
+      role
     });
 
     const accessToken = generateAccessToken({ userResult });

@@ -1,5 +1,12 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import bcrypt from "bcrypt";
 import Admin from "../model/admin.js";
+
+import JWT from "jsonwebtoken";
+
+const refreshTokens = [];
 
 export const signup = async (req, res) => {
   const { email, password, confirmPassword } = req.body;
@@ -20,7 +27,9 @@ export const signup = async (req, res) => {
       password: hashedPassword,
     });
 
-    res.status(200).json({ result });
+    const accessToken = generateAccessToken({ result });
+
+    res.status(200).json({ accessToken: accessToken });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -43,8 +52,31 @@ export const signin = async (req, res) => {
     if (!isPasswordCorrect)
       return res.status(404).json({ message: "Invalid password" });
 
-    res.status(200).json({ result: exitingUser });
+
+    const accessToken = generateAccessToken({ exitingUser });
+    const refreshToken = JWT.sign(
+      { exitingUser },
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    refreshTokens.push(refreshToken);
+    // const accessToken = exitingUser;
+    res
+      .status(200)
+      .json({ accessToken: accessToken, refreshToken: refreshToken });
   } catch (err) {
     res.status(500).json("Something went wrong");
   }
 };
+
+export const logout = (req, res) => {
+  refreshTokens = refreshTokens.filter((token) => token !== req.body.token);
+
+  res.sendStatus(204);
+};
+
+function generateAccessToken(exitingUser) {
+  return JWT.sign(exitingUser, process.env.ACCESS_TOKEN_SECRET, {
+    expiresIn: "15h",
+  });
+}
