@@ -12,8 +12,8 @@ import CommentsRoutes from "./routes/comment.js";
 
 dotenv.config();
 const app = express();
-app.use(cors());
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use("/api/v1/auth", UsersRoutes);
 app.use("/api/v1/admin", AdminsRoutes);
