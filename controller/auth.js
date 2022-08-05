@@ -33,12 +33,12 @@ export const refreshToken = (req, res) => {
 };
 
 export const signup = async (req, res) => {
-  const { email, password, name, phone, confirmPassword, role } = req.body;
+  const { email, password, name, phone, confirmPassword} = req.body;
 
   try {
-    const exitingUser = await user.findOne({ email });
+    const existingUser = await user.findOne({ email });
 
-    if (exitingUser)
+    if (existingUser)
       return res.status(404).json({ message: "User already exist" });
 
     if (password !== confirmPassword)
@@ -51,7 +51,7 @@ export const signup = async (req, res) => {
       password: hashedPassword,
       name,
       phone,
-      role
+      role: 'patient'
     });
 
     const accessToken = generateAccessToken({ userResult });

@@ -12,15 +12,16 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
-    role: {
-      type: String,
-    },
     refreshTokens: {
       type: Array,
       default: [],
     },
     password: {
       type: String,
+    },
+    role: {
+      type: String,
+      enum: ['patient', 'doctor', 'nurse']
     },
     confirmPassword: {
       type: String,
@@ -29,6 +30,9 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    hospital: {
+      type: String,
+    }
   },
   { timestamps: true }
 );

@@ -3,7 +3,7 @@ dotenv.config();
 
 import bcrypt from "bcrypt";
 import Admin from "../model/admin.js";
-
+import Hospital from "../model/hospital.js";
 import JWT from "jsonwebtoken";
 
 const refreshTokens = [];
@@ -79,4 +79,21 @@ function generateAccessToken(exitingUser) {
   return JWT.sign(exitingUser, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15h",
   });
+}
+
+export const deleteHospital = async (req, res) => {
+  const { id } = req.params;
+  const token = req.headers.authorization
+  const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET)
+  if (decoded.role !== 'admin') return res.status(401).json({ message: 'Unauthorized' })  
+  try {
+    const hospital = await Hospital.findByIdAndDelete(id);
+
+    if (!hospital)
+      return res.status(404).json({ message: "Hospital not found" });
+
+    res.status(200).json({ message: "Hospital deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Something went wrong" });
+  }
 }
