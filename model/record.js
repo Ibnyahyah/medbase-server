@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 
 const ReacordSchema = new mongoose.Schema(
   {
+    hospitalName: {
+      type: String,
+    },
     name: {
       type: String,
     },

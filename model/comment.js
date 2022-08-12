@@ -8,6 +8,9 @@ const CommentSchema = new mongoose.Schema(
         contents: {
             type: String
         },
+        file: {
+            type: String
+        },
         role: {
             type: String
         }
