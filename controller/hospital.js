@@ -1,4 +1,4 @@
-import User from '../model/userSchema.js'
+import User from '../model/userSchema';
 import Hospital from '../model/hospital.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
@@ -73,51 +73,79 @@ export const logout = (req, res) => {
     res.status(200).json({ message: 'Logged out' })
 }
 
-export const getHospitals = (req, res) => {
+export const deleteUser = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) return res.status(401).json({ message: 'Token not found' })
     try {
-        Hospital.find({}).select('hospitalName')
-            .then(hospitals => {
-                res.status(200).json(hospitals)
-            })
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const hospitalName = decoded.hospitalName
+        const { id } = req.params.id
+        await User.findAndDelete({ _id: id, hospital: hospitalName })
+        res.status(200).json({ message: 'User deleted successfully' })
     } catch (err) {
-        res.status(500).json({ message: "Something went wrong" })
+        res.status(500).json({ message: 'Something went wrong' })
     }
 }
 
-export const getHospital = (req, res) => {
-    const { id } = req.params
+export const getAllUsers = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) return res.status(401).json({ message: 'Token not found' })
     try {
-        Hospital.findById(id)
-            .then(hospital => {
-                res.status(200).json(hospital)
-            }).catch(err => {
-                res.status(500).json({ message: "Something went wrong" })
-            })
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const hospitalName = decoded.hospitalName
+        const users = await User.find({ hospital: hospitalName })
+        res.status(200).json({ users })
     } catch (err) {
-        res.status(500).json({ message: "Something went wrong" })
+        res.status(500).json({ message: 'Something went wrong' })
     }
 }
-export const createPatient = async (req, res) => {
-    const token = req.body.token || req.query.token || req.headers["x-access-token"];
-    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-    const hospitalName = decoded.name
-    const { name, phone, email, password } = req.body
+
+export const getUser = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) return res.status(401).json({ message: 'Token not found' })
     try {
-        const existingUser = await User.findOne({ email })
-        if (existingUser)
-            return res.status(404).json({ message: "Patient already exist" })
-        const hashedPassword = await bcrypt.hash(password, 12)
-        const patient = await User.create({
-            email,
-            password: hashedPassword,
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const hospitalName = decoded.hospitalName
+        const { id } = req.params.id
+        const user = await User.findOne({ _id: id, hospital: hospitalName })
+        res.status(200).json({ user })
+    } catch (err) {
+        res.status(500).json({ message: 'Something went wrong' })
+    }
+}
+
+export const updateUser = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) return res.status(401).json({ message: 'Token not found' })
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const hospitalName = decoded.hospitalName
+        const { id } = req.params.id
+        const { email,
             name,
             phone,
-            role: 'patient',
-            hospital: hospitalName
+            hospital,
+            role,
+            country,
+            staffIDNo,
+            professionalAssociationIDNo,
+            affiliatedMedicalProfessionalAssociation,
+            passport, } = req.body
+        const user = await User.findOneAndUpdate({ _id: id, hospital: hospitalName }, {
+            email,
+            name,
+            phone,
+            hospital,
+            role,
+            country,
+            staffIDNo,
+            professionalAssociationIDNo,
+            affiliatedMedicalProfessionalAssociation,
+            passport,
         })
-        const token = jwt.sign({ role: patient.role, name: patient.name, email: patient.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
-        res.status(201).json({ message: 'User created successfully', token })
+        res.status(200).json({ user })
     } catch (err) {
-        res.status(500).json({ message: "Something went wrong" })
+        res.status(500).json({ message: 'Something went wrong' })
     }
 }
+
