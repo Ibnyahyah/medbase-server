@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ReacordSchema = new mongoose.Schema(
+const RecordSchema = new mongoose.Schema(
   {
     hospitalName: {
       type: String,
@@ -51,4 +51,4 @@ const ReacordSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Reacord", ReacordSchema);
+export default mongoose.model("Record", RecordSchema);

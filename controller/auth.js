@@ -33,7 +33,19 @@ export const refreshToken = (req, res) => {
 };
 
 export const signup = async (req, res) => {
-  const { email, password, name, phone, confirmPassword, hospital } = req.body;
+  const {
+    email, confirmPassword,
+    password,
+    name,
+    phone,
+    hospital,
+    role,
+    country,
+    staffIDNo,
+    professionalAssociationIDNo,
+    affiliatedMedicalProfessionalAssociation,
+    passport,
+  } = req.body;
 
   try {
     const existingUser = await user.findOne({ email });
@@ -52,7 +64,12 @@ export const signup = async (req, res) => {
       name,
       phone,
       hospital,
-      role: 'Doctor'
+      role,
+      country,
+      staffIDNo,
+      professionalAssociationIDNo,
+      affiliatedMedicalProfessionalAssociation,
+      passport,
     });
 
     const accessToken = generateAccessToken({ userResult });

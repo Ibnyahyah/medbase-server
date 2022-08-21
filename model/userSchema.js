@@ -12,27 +12,41 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
     },
+    country: {
+      type: String,
+    },
+    role: {
+      type: String,
+      enum: ['Medical Director', 'Admin Officer', 'General Doctor', 'Radiologist', 'Nurse', 'Therapist', 'Anaesthesiologist', 'Pharmacist', 'Resident', 'General Surgeon', 'Specialised Surgeon']
+    },
+    hospitalName: {
+      type: String,
+    },
+    staffIDNo: {
+      type: String,
+    },
+    affiliatedMedicalProfessionalAssociation: {
+      type: String,
+    },
+    professionalAssociationIDNo: {
+      type: String,
+    },
+    passport: {
+      type: String,
+    },
     refreshTokens: {
       type: Array,
       default: [],
     },
     password: {
       type: String,
-    },
-    role: {
-      type: String,
-      // enum: ['doctor', 'nurse']
-    },
-    confirmPassword: {
+    }, confirmPassword: {
       type: String,
     },
     access: {
       type: Boolean,
       default: false,
     },
-    hospital: {
-      type: String,
-    }
   },
   { timestamps: true }
 );

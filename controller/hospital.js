@@ -7,35 +7,58 @@ dotenv.config()
 const refreshTokens = []
 
 export const register = async (req, res) => {
-    const { email, password, name, address, phone } = req.body
+    const {
+        hospitalName,
+        hospitalAddress,
+        hospitalHotline,
+        hospitalEmail,
+        country,
+        state_or_region,
+        city,
+        hospitalLicensedNumber,
+        hospitalSpeciality,
+        fullNameOfHospitalContactPerson,
+        contactPersonRegistrationNo,
+        contactPersonEmailAddress,
+        contactPersonPhoneNumber, password
+    } = req.body
     try {
-        const existingUser = await Hospital.findOne({ email })
+        const existingUser = await Hospital.findOne({ hospitalEmail })
         if (existingUser)
             return res.status(404).json({ message: "Hospital already exist" })
         const hashedPassword = await bcrypt.hash(password, 12)
         const hospital = await Hospital.create({
-            email,
+            hospitalEmail,
             password: hashedPassword,
-            name,
-            address,
-            phone,
-            role: 'hospital'
+            hospitalName,
+            hospitalAddress,
+            hospitalHotline,
+            hospitalEmail,
+            country,
+            state_or_region,
+            city,
+            hospitalLicensedNumber,
+            hospitalSpeciality,
+            fullNameOfHospitalContactPerson,
+            contactPersonRegistrationNo,
+            contactPersonEmailAddress,
+            contactPersonPhoneNumber
         })
-        const token = jwt.sign({ role: hospital.role, name: hospital.name, email: hospital.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+        const token = jwt.sign({ hospital }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
         res.status(201).json({ message: 'User created successfully', token })
     } catch (err) {
-        res.status(500).json({ message: "Something went wrong" })
+        res.status(500).json({ message: "Something went wrong", })
     }
 }
 
 export const login = async (req, res) => {
-    const { email, password } = req.body
+    const { hospitalEmail, password } = req.body
     try {
-        const hospital = await Hospital.findOne({ email })
+        const hospital = await Hospital.findOne({ hospitalEmail })
         if (!hospital) return res.status(400).json({ message: 'Hospital not found' })
         const isPasswordCorrect = await bcrypt.compare(password, hospital.password)
         if (!isPasswordCorrect) return res.status(400).json({ message: 'Invalid password' })
-        const token = jwt.sign({ role: hospital.role, name: hospital.name, email: hospital.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+        const token = jwt.sign({ hospital }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
         res.status(200).json({ message: "User Successfully logged in", token })
     } catch (err) {
         res.status(500).json({ message: 'Something went wrong' })
@@ -52,7 +75,7 @@ export const logout = (req, res) => {
 
 export const getHospitals = (req, res) => {
     try {
-        Hospital.find({}).select('name')
+        Hospital.find({}).select('hospitalName')
             .then(hospitals => {
                 res.status(200).json(hospitals)
             })

@@ -1,31 +1,64 @@
 import Mongoose from 'mongoose'
 
 const HospitalSchema = new Mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    address: {
-        type: String,
-        required: true
-    },
-    phone: {
-        type: String,
-        required: true
-    },
-    email: {
+    hospitalName: {
         type: String,
         required: true,
         unique: true
     },
-    password: {
+    hospitalAddress: {
         type: String,
         required: true
     },
-    role: {
+    hospitalHotline: {
         type: String,
         required: true,
-        default: 'hospital'
+        unique: true
+    },
+    hospitalEmail: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    country: {
+        type: String,
+        required: true
+    },
+    state_or_region: {
+        type: String,
+        required: true
+    },
+    city: {
+        type: String,
+        required: true
+    },
+    hospitalLicensedNumber: {
+        type: String,
+        required: true
+    },
+    hospitalSpeciality: {
+        type: String,
+        required: true
+    },
+    fullNameOfHospitalContactPerson: {
+        type: String,
+        required: true
+    },
+    contactPersonRegistrationNo: {
+        type: String,
+        required: true
+    },
+    contactPersonEmailAddress: {
+        type: String,
+        required: true
+    },
+    contactPersonPhoneNumber: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
     },
     createdAt: {
         type: Date,
