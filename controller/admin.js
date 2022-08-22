@@ -31,7 +31,7 @@ export const signup = async (req, res) => {
 
     const accessToken = generateAccessToken({ result });
 
-    res.status(200).json({ accessToken: accessToken });
+    res.status(200).json({ message: 'User Successfully Register', accessToken: accessToken });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -65,7 +65,7 @@ export const signin = async (req, res) => {
     // const accessToken = exitingUser;
     res
       .status(200)
-      .json({ accessToken: accessToken, refreshToken: refreshToken });
+      .json({ message: 'User Successfully Logged in', accessToken: accessToken, refreshToken: refreshToken });
   } catch (err) {
     res.status(500).json("Something went wrong");
   }
@@ -202,6 +202,7 @@ export const getPatients = async (req, res) => {
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
   const { role } = decoded.role;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
+
   try {
     const patients = await Patient.find();
 

@@ -1,5 +1,9 @@
+<<<<<<< HEAD
+import User from '../model/userSchema';
+=======
 import Patient from '../model/patient.js'
 import User from '../model/userSchema.js'
+>>>>>>> ibro
 import Hospital from '../model/hospital.js'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
@@ -8,35 +12,58 @@ dotenv.config()
 const refreshTokens = []
 
 export const register = async (req, res) => {
-    const { email, password, name, address, phone } = req.body
+    const {
+        hospitalName,
+        hospitalAddress,
+        hospitalHotline,
+        hospitalEmail,
+        country,
+        state_or_region,
+        city,
+        hospitalLicensedNumber,
+        hospitalSpeciality,
+        fullNameOfHospitalContactPerson,
+        contactPersonRegistrationNo,
+        contactPersonEmailAddress,
+        contactPersonPhoneNumber, password
+    } = req.body
     try {
-        const existingUser = await Hospital.findOne({ email })
+        const existingUser = await Hospital.findOne({ hospitalEmail })
         if (existingUser)
             return res.status(404).json({ message: "Hospital already exist" })
         const hashedPassword = await bcrypt.hash(password, 12)
         const hospital = await Hospital.create({
-            email,
+            hospitalEmail,
             password: hashedPassword,
-            name,
-            address,
-            phone,
-            role: 'hospital'
+            hospitalName,
+            hospitalAddress,
+            hospitalHotline,
+            hospitalEmail,
+            country,
+            state_or_region,
+            city,
+            hospitalLicensedNumber,
+            hospitalSpeciality,
+            fullNameOfHospitalContactPerson,
+            contactPersonRegistrationNo,
+            contactPersonEmailAddress,
+            contactPersonPhoneNumber
         })
-        const token = jwt.sign({ role: hospital.role, name: hospital.name, email: hospital.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+        const token = jwt.sign({ hospital }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
         res.status(201).json({ message: 'User created successfully', token })
     } catch (err) {
-        res.status(500).json({ message: "Something went wrong" })
+        res.status(500).json({ message: "Something went wrong", })
     }
 }
 
 export const login = async (req, res) => {
-    const { email, password } = req.body
+    const { hospitalEmail, password } = req.body
     try {
-        const hospital = await Hospital.findOne({ email })
+        const hospital = await Hospital.findOne({ hospitalEmail })
         if (!hospital) return res.status(400).json({ message: 'Hospital not found' })
         const isPasswordCorrect = await bcrypt.compare(password, hospital.password)
         if (!isPasswordCorrect) return res.status(400).json({ message: 'Invalid password' })
-        const token = jwt.sign({ role: hospital.role, name: hospital.name, email: hospital.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
+        const token = jwt.sign({ hospital }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
         res.status(200).json({ message: "User Successfully logged in", token })
     } catch (err) {
         res.status(500).json({ message: 'Something went wrong' })
@@ -51,6 +78,17 @@ export const logout = (req, res) => {
     res.status(200).json({ message: 'Logged out' })
 }
 
+<<<<<<< HEAD
+export const deleteUser = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) return res.status(401).json({ message: 'Token not found' })
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const hospitalName = decoded.hospitalName
+        const { id } = req.params.id
+        await User.findAndDelete({ _id: id, hospital: hospitalName })
+        res.status(200).json({ message: 'User deleted successfully' })
+=======
 export const createPatient = async (req, res) => {
     const token = req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
@@ -81,11 +119,22 @@ export const getPatients = async (req, res) => {
         if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
         const patients = await Patient.find({ hospital: hospital._id })
         res.status(200).json(patients)
+>>>>>>> ibro
     } catch (err) {
-        res.status(500).json({ message: "Something went wrong" })
+        res.status(500).json({ message: 'Something went wrong' })
     }
 }
 
+<<<<<<< HEAD
+export const getAllUsers = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) return res.status(401).json({ message: 'Token not found' })
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const hospitalName = decoded.hospitalName
+        const users = await User.find({ hospital: hospitalName })
+        res.status(200).json({ users })
+=======
 export const getPatient = async (req, res) => {
     const { id } = req.params
     const token = req.headers.authorization.split(' ')[1]
@@ -97,11 +146,47 @@ export const getPatient = async (req, res) => {
         const patient = await Patient.findById(id)
         if (!patient) return res.status(404).json({ message: 'Patient not found' })
         res.status(200).json(patient)
+>>>>>>> ibro
     } catch (err) {
-        res.status(500).json({ message: "Something went wrong" })
+        res.status(500).json({ message: 'Something went wrong' })
     }
 }
 
+<<<<<<< HEAD
+export const getUser = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) return res.status(401).json({ message: 'Token not found' })
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const hospitalName = decoded.hospitalName
+        const { id } = req.params.id
+        const user = await User.findOne({ _id: id, hospital: hospitalName })
+        res.status(200).json({ user })
+    } catch (err) {
+        res.status(500).json({ message: 'Something went wrong' })
+    }
+}
+
+export const updateUser = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    if (!token) return res.status(401).json({ message: 'Token not found' })
+    try {
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+        const hospitalName = decoded.hospitalName
+        const { id } = req.params.id
+        const { email,
+            name,
+            phone,
+            hospital,
+            role,
+            country,
+            staffIDNo,
+            professionalAssociationIDNo,
+            affiliatedMedicalProfessionalAssociation,
+            passport, } = req.body
+        const user = await User.findOneAndUpdate({ _id: id, hospital: hospitalName }, {
+            email,
+=======
 export const updatePatient = async (req, res) => {
     const { id } = req.params
     const token = req.headers.authorization.split(' ')[1]
@@ -160,9 +245,21 @@ export const createStaff = async (req, res) => {
         const hospital = await Hospital.findById(decoded.id)
         if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
         const newStaff = await Staff.create({
+>>>>>>> ibro
             name,
             email,
             phone,
+<<<<<<< HEAD
+            hospital,
+            role,
+            country,
+            staffIDNo,
+            professionalAssociationIDNo,
+            affiliatedMedicalProfessionalAssociation,
+            passport,
+        })
+        res.status(200).json({ user })
+=======
             role, 
             access, 
             password,
@@ -185,11 +282,14 @@ export const getStaff = async (req, res) => {
         if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
         const staff = await Staff.find({ hospital: hospital._id })
         res.status(200).json(staff)
+>>>>>>> ibro
     } catch (err) {
-        res.status(500).json({ message: "Something went wrong" })
+        res.status(500).json({ message: 'Something went wrong' })
     }
 }
 
+<<<<<<< HEAD
+=======
 export const getStaffById = async (req, res) => {
     const { id } = req.params
     const token = req.headers.authorization.split(' ')[1]
@@ -246,3 +346,4 @@ export const deleteStaff = async (req, res) => {
     }
 }
 
+>>>>>>> ibro

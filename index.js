@@ -20,7 +20,7 @@ app.use("/api/v1/auth", UsersRoutes);
 app.use("/api/v1/admin", AdminsRoutes);
 app.use("/api/v1/records", RecordsRoutes);
 app.use("/api/v1/comment", CommentsRoutes);
-app.use("/api/v1/hospital", HospitalRoutes); 
+app.use("/api/v1/hospital", HospitalRoutes);
 app.get("/", async (req, res) => {
   res.send("Welcome to server");
 });

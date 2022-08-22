@@ -33,7 +33,19 @@ export const refreshToken = (req, res) => {
 };
 
 export const signup = async (req, res) => {
-  const { email, password, name, phone, confirmPassword} = req.body;
+  const {
+    email, confirmPassword,
+    password,
+    name,
+    phone,
+    hospital,
+    role,
+    country,
+    staffIDNo,
+    professionalAssociationIDNo,
+    affiliatedMedicalProfessionalAssociation,
+    passport,
+  } = req.body;
 
   try {
     const existingUser = await user.findOne({ email });
@@ -51,13 +63,19 @@ export const signup = async (req, res) => {
       password: hashedPassword,
       name,
       phone,
-      role: 'patient'
+      hospital,
+      role,
+      country,
+      staffIDNo,
+      professionalAssociationIDNo,
+      affiliatedMedicalProfessionalAssociation,
+      passport,
     });
 
     const accessToken = generateAccessToken({ userResult });
 
     // const accessToken = userResult;
-    res.status(200).json({ accessToken: accessToken });
+    res.status(200).json({ message: 'User Successfully Register', accessToken: accessToken });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -90,7 +108,7 @@ export const signin = async (req, res) => {
     // const accessToken = exitingUser;
     res
       .status(200)
-      .json({ accessToken: accessToken, refreshToken: refreshToken });
+      .json({ message: 'User Successfully Logged in', accessToken: accessToken, refreshToken: refreshToken });
   } catch (err) {
     res.status(500).json("Error :" + err, "Something went wrong");
   }
