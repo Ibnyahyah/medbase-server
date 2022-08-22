@@ -21,10 +21,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['patient', 'doctor', 'nurse']
-    },
-    confirmPassword: {
-      type: String,
+      enum: ['patient', 'doctor', 'nurse'],
+      required: true
     },
     access: {
       type: Boolean,
@@ -32,6 +30,7 @@ const userSchema = new mongoose.Schema(
     },
     hospital: {
       type: String,
+      required: true,
     }
   },
   { timestamps: true }

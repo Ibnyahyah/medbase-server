@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ReacordSchema = new mongoose.Schema(
+const PatientSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -48,4 +48,4 @@ const ReacordSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("Reacord", ReacordSchema);
+export default mongoose.model("Patient", PatientSchema);

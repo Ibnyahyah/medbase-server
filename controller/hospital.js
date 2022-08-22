@@ -1,3 +1,4 @@
+import Patient from '../model/patient.js'
 import User from '../model/userSchema.js'
 import Hospital from '../model/hospital.js'
 import jwt from 'jsonwebtoken'
@@ -50,51 +51,198 @@ export const logout = (req, res) => {
     res.status(200).json({ message: 'Logged out' })
 }
 
-export const getHospitals = (req, res) => {
+export const createPatient = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
+    const { name, email, phone, gender, age, bloodGroup, bp, genotype, height, nextOfKin, nextOfKinPhone, nextOfKinAddress, pulse, weight } = req.body
     try {
-        Hospital.find({}).select('name')
-            .then(hospitals => {
-                res.status(200).json(hospitals)
-            })
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const newPatient = await Patient.create({
+            name,
+            email,
+            phone,
+            gender, age, bloodGroup, bp, genotype, height, nextOfKin, nextOfKinPhone, nextOfKinAddress, pulse, weight
+        })
+        hospital.patients.push(newPatient)
+        await hospital.save()
+        res.status(201).json({ message: 'Patient created successfully' })
+    } catch (err) {
+        res.status(500).json({ message: "Something went wrong" })
+    }
+}
+export const getPatients = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
+    try {
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const patients = await Patient.find({ hospital: hospital._id })
+        res.status(200).json(patients)
     } catch (err) {
         res.status(500).json({ message: "Something went wrong" })
     }
 }
 
-export const getHospital = (req, res) => {
+export const getPatient = async (req, res) => {
     const { id } = req.params
-    try {
-        Hospital.findById(id)
-            .then(hospital => {
-                res.status(200).json(hospital)
-            }).catch(err => {
-                res.status(500).json({ message: "Something went wrong" })
-            })
-    } catch (err) {
-        res.status(500).json({ message: "Something went wrong" })
-    }
-}
-export const createPatient = async (req, res) => {
-    const token = req.body.token || req.query.token || req.headers["x-access-token"];
+    const token = req.headers.authorization.split(' ')[1]
     const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
-    const hospitalName = decoded.name
-    const { name, phone, email, password } = req.body
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
     try {
-        const existingUser = await User.findOne({ email })
-        if (existingUser)
-            return res.status(404).json({ message: "Patient already exist" })
-        const hashedPassword = await bcrypt.hash(password, 12)
-        const patient = await User.create({
-            email,
-            password: hashedPassword,
-            name,
-            phone,
-            role: 'patient',
-            hospital: hospitalName
-        })
-        const token = jwt.sign({ role: patient.role, name: patient.name, email: patient.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' })
-        res.status(201).json({ message: 'User created successfully', token })
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const patient = await Patient.findById(id)
+        if (!patient) return res.status(404).json({ message: 'Patient not found' })
+        res.status(200).json(patient)
     } catch (err) {
         res.status(500).json({ message: "Something went wrong" })
     }
 }
+
+export const updatePatient = async (req, res) => {
+    const { id } = req.params
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
+    const { name, email, phone, gender, age, bloodGroup, bp, genotype, height, nextOfKin, nextOfKinPhone, nextOfKinAddress, pulse, weight } = req.body
+    try {
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const patient = await Patient.findById(id)
+        if (!patient) return res.status(404).json({ message: 'Patient not found' })
+        patient.name = name
+        patient.email = email
+        patient.phone = phone
+        patient.gender = gender
+        patient.age = age
+        patient.bloodGroup = bloodGroup
+        patient.bp = bp
+        patient.genotype = genotype
+        patient.height = height
+        patient.nextOfKin = nextOfKin
+        patient.nextOfKinPhone = nextOfKinPhone
+        patient.nextOfKinAddress = nextOfKinAddress
+        patient.pulse = pulse
+        patient.weight = weight
+        await patient.save()
+        res.status(200).json({ message: 'Patient updated successfully' })
+    } catch (err) {
+        res.status(500).json({ message: "Something went wrong" })
+    }
+}
+
+export const deletePatient = async (req, res) => {
+    const { id } = req.params
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
+    try {
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const patient = await Patient.findById(id)
+        if (!patient) return res.status(404).json({ message: 'Patient not found' })
+        await patient.remove()
+        res.status(200).json({ message: 'Patient deleted successfully' })
+    } catch (err) {
+        res.status(500).json({ message: "Something went wrong" })
+    }
+}
+
+export const createStaff = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
+    const { name, email, phone, role, access, password} = req.body
+    try {
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const newStaff = await Staff.create({
+            name,
+            email,
+            phone,
+            role, 
+            access, 
+            password,
+            hospital: hospital.name
+        })
+        hospital.staff.push(newStaff)
+        await hospital.save()
+        res.status(201).json({ message: 'Staff created successfully' })
+    } catch (err) {
+        res.status(500).json({ message: "Something went wrong" })
+    }
+}
+
+export const getStaff = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
+    try {
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const staff = await Staff.find({ hospital: hospital._id })
+        res.status(200).json(staff)
+    } catch (err) {
+        res.status(500).json({ message: "Something went wrong" })
+    }
+}
+
+export const getStaffById = async (req, res) => {
+    const { id } = req.params
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
+    try {
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const staff = await Staff.findById(id)
+        if (!staff) return res.status(404).json({ message: 'Staff not found' })
+        res.status(200).json(staff)
+    } catch (err) {
+        res.status(500).json({ message: "Something went wrong" })
+    }
+}
+
+export const updateStaff = async (req, res) => {
+    const { id } = req.params
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
+    const { name, email, phone, role, access  } = req.body
+    try {
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const staff = await Staff.findById(id)
+        if (!staff) return res.status(404).json({ message: 'Staff not found' })
+        staff.name = name
+        staff.email = email
+        staff.phone = phone
+        staff.role = role
+        staff.access = access
+        await staff.save()
+        res.status(200).json({ message: 'Staff updated successfully' })
+    } catch (err) {
+        res.status(500).json({ message: "Something went wrong" })
+    }
+}
+
+export const deleteStaff = async (req, res) => {
+    const { id } = req.params
+    const token = req.headers.authorization.split(' ')[1]
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
+    if (decoded.role !== 'hospital') return res.status(401).json({ message: 'Unauthorized' })
+    try {
+        const hospital = await Hospital.findById(decoded.id)
+        if (!hospital) return res.status(404).json({ message: 'Hospital not found' })
+        const staff = await Staff.findById(id)
+        if (!staff) return res.status(404).json({ message: 'Staff not found' })
+        await staff.remove()
+        res.status(200).json({ message: 'Staff deleted successfully' })
+    } catch (err) {
+        res.status(500).json({ message: "Something went wrong" })
+    }
+}
+
