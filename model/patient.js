@@ -1,10 +1,7 @@
 import mongoose from "mongoose";
 
-<<<<<<< HEAD:model/patient.js
-const RecordSchema = new mongoose.Schema(
-=======
+
 const PatientSchema = new mongoose.Schema(
->>>>>>> ibro:model/record.js
   {
     hospitalName: {
       type: String,
@@ -70,8 +67,6 @@ const PatientSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-<<<<<<< HEAD:model/patient.js
-export default mongoose.model("Record", RecordSchema);
-=======
+
 export default mongoose.model("Patient", PatientSchema);
->>>>>>> ibro:model/record.js
+

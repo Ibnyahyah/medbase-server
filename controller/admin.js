@@ -128,12 +128,6 @@ export const revokeHospitalAccess = async (req, res) => {
 }
 
 export const deleteHospital = async (req, res) => {
-<<<<<<< HEAD
-  const { id } = req.params;
-  const token = req.headers.authorization
-  const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET)
-  if (decoded.role !== 'admin') return res.status(401).json({ message: 'Unauthorized' })
-=======
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
   const { role } = decoded.role;
@@ -208,7 +202,7 @@ export const getPatients = async (req, res) => {
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
   const { role } = decoded.role;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
->>>>>>> ibro
+
   try {
     const patients = await Patient.find();
 

@@ -1,17 +1,12 @@
 import express from 'express';
 const router = express.Router()
-<<<<<<< HEAD
 import {login, register, logout, getAllUsers, getUser, deleteUser } from "../controller/hospital.js";
 import {createPatient, getPatient, getPatients, updatePatient, deletePatient} from "../controller/patient.js";
-
-=======
 import {login, register, logout, createStaff, getStaff, getStaffById, updateStaff, deleteStaff, createPatient, getPatients, getPatient, updatePatient, deletePatient} from "../controller/hospital.js";
->>>>>>> ibro
 
 router.post('/register', register)
 router.post('/login', login)
 router.post('/logout', logout)
-<<<<<<< HEAD
 router.get('/patients', getPatients)
 router.get('/patient/:id', getPatient)
 router.post('/patient', createPatient)
@@ -20,9 +15,6 @@ router.delete('/patient/:id', deletePatient)
 router.get('/users', getAllUsers)
 router.get('/user/:id', getUser)
 router.delete('/user/:id', deleteUser)
-
-
-=======
 router.post('/new-patient', createPatient)
 router.get('/patients', getPatients)
 router.get('/patients/:id', getPatient)
@@ -33,5 +25,5 @@ router.get('/staff', getStaff)
 router.get('/staff/:id', getStaffById)
 router.put('/staff/:id', updateStaff)
 router.delete('/staff/:id', deleteStaff)
->>>>>>> ibro
+
 export default router
