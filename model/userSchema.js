@@ -50,11 +50,20 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+
+      enum: ['patient', 'doctor', 'nurse'],
+      required: true
+
     },
     access: {
       type: Boolean,
       default: false,
     },
+
+    hospital: {
+      type: String,
+      required: true,
+    }
   },
   { timestamps: true }
 );
