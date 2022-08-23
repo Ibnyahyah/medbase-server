@@ -4,7 +4,6 @@ const HospitalSchema = new Mongoose.Schema({
     hospitalName: {
         type: String,
         required: true,
-        unique: true
     },
     hospitalAddress: {
         type: String,

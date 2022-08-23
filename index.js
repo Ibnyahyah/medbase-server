@@ -22,7 +22,7 @@ app.use("/api/v1/records", RecordsRoutes);
 app.use("/api/v1/comment", CommentsRoutes);
 app.use("/api/v1/hospital", HospitalRoutes);
 app.get("/", async (req, res) => {
-  res.send("Welcome to server");
+  res.send("<h1 style='text-align:center;'>Welcome to medbase server</h1>");
 });
 
 const PORT = process.env.PORT;
