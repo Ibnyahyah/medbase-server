@@ -20,7 +20,7 @@ export const register = async (req, res) => {
         fullNameOfHospitalContactPerson,
         contactPersonRegistrationNo,
         contactPersonEmailAddress,
-        contactPersonPhoneNumber, password
+        contactPersonPhoneNumber, password,
     } = req.body
     try {
         const existingUser = await Hospital.findOne({ hospitalEmail })
