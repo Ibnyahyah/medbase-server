@@ -60,9 +60,10 @@ const HospitalSchema = new Mongoose.Schema({
         type: String,
         required: true
     },
-
-},
-    { timestamps: true }
-)
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+})
 
 export default Mongoose.model("Hospital", HospitalSchema)
