@@ -12,12 +12,17 @@ const AdminSchema = new mongoose.Schema(
     },
     isAdmin: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     isMaster: {
       type: Boolean,
-      default: false,
+      default: true,
     },
+    role: {
+      type: String,
+      enum: ['admin'],
+      default: 'admin',
+    }
   },
   { timestamps: true }
 );

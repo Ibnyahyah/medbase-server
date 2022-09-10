@@ -4,9 +4,9 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 
-import UsersRoutes from "./routes/users.js";
+import StaffsRoutes from "./routes/staffs.js";
 import AdminsRoutes from "./routes/admins.js";
-import RecordsRoutes from "./routes/records.js";
+import PatientRoutes from "./routes/patient.js";
 import CommentsRoutes from "./routes/comment.js";
 import HospitalRoutes from "./routes/hospital.js"
 // config
@@ -16,13 +16,14 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-app.use("/api/v1/auth", UsersRoutes);
+app.use("/api/v1/staff", StaffsRoutes);
 app.use("/api/v1/admin", AdminsRoutes);
-app.use("/api/v1/records", RecordsRoutes);
+app.use("/api/v1/patients", PatientRoutes);
 app.use("/api/v1/comment", CommentsRoutes);
 app.use("/api/v1/hospital", HospitalRoutes);
+
 app.get("/", async (req, res) => {
-  res.send("<h1 style='text-align:center;'>Welcome to medbase server</h1>");
+  res.send("Welcome to server");
 });
 
 const PORT = process.env.PORT;

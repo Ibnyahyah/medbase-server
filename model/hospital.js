@@ -4,6 +4,7 @@ const HospitalSchema = new Mongoose.Schema({
     hospitalName: {
         type: String,
         required: true,
+        unique: true
     },
     hospitalAddress: {
         type: String,
@@ -59,10 +60,25 @@ const HospitalSchema = new Mongoose.Schema({
         type: String,
         required: true
     },
-    createdAt: {
-        type: Date,
-        default: Date.now
+    access: {
+        type: Boolean,
+        default: false,
+    },
+    role: {
+        type: String,
+        enum: ['hospital'],
+        default: 'hospital',
+    },
+    patients: {
+        type: [String],
+        default: [],
+    },
+    staffs: {
+        type: [String],
+        default: [],
     }
-})
+},
+    { timestamps: true }
+)
 
 export default Mongoose.model("Hospital", HospitalSchema)
