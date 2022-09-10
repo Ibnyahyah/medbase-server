@@ -18,7 +18,7 @@ router.delete('/patient/:id', deletePatient)
 router.post('/new-staff', createStaff)
 router.get('/staffs', getStaffs)
 router.get('/staff/:id', getStaffById)
-router.patch('/staff/:id', updateStaff)
+router.put('/staff/:id', updateStaff)
 router.delete('/staff/:id', deleteStaff)
 router.patch('/staff/:id', revokeStaffAccess)
 
