@@ -26,14 +26,12 @@ app.get("/", async (req, res) => {
   res.send("Welcome to server");
 });
 
-const PORT = process.env.PORT;
-
 mongoose
   .connect(process.env.CONNECTION_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then(() =>
-    app.listen(PORT, () => console.log("Server Running on port: " + PORT))
+    app.listen(process.env.PORT || 3003,()=>console.log('Server running'))
   )
-  .catch((err) => console.log(err));
+  .catch ((err) => console.log(err));
