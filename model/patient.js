@@ -3,9 +3,9 @@ import mongoose from "mongoose";
 
 const PatientSchema = new mongoose.Schema(
   {
-    hospitalName: {
+    hospitalId: {
       type: String,
-      required: true,
+      required: true
     },
     name: {
       type: String,
@@ -27,6 +27,14 @@ const PatientSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    dateOfBirth: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
     bloodGroup: {
       type: String,
       required: true,
@@ -39,7 +47,15 @@ const PatientSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    pulse: {
+      type: String,
+      required: true,
+    },
     height: {
+      type: String,
+      required: true,
+    },
+    weight: {
       type: String,
       required: true,
     },
@@ -55,14 +71,10 @@ const PatientSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    pulse: {
-      type: String,
-      required: true,
-    },
-    weight: {
-      type: String,
-      required: true,
-    },
+    informationUsageAuthorization: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );

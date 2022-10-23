@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
+const staffSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
       enum: ['Medical Director', 'General Doctor', 'Radiologist', 'Nurse', 'Therapist', 'Anaesthesiologist', 'Pharmacist', 'Resident', 'General Surgeon', 'Specialised Surgeon'],
       required: true,
     },
-    hospital: {
+    hospitalId: {
       type: String,
       required: true,
     },
@@ -41,31 +41,17 @@ const userSchema = new mongoose.Schema(
     },
     passport: {
       type: String,
-      required: true,
-    },
-    refreshTokens: {
-      type: Array,
-      default: [],
     },
     password: {
       type: String,
       required: true,
-
-      enum: ['patient', 'doctor', 'nurse'],
-      required: true
-
     },
     access: {
       type: Boolean,
       default: false,
     },
-
-    hospital: {
-      type: String,
-      required: true,
-    }
   },
   { timestamps: true }
 );
 
-export default mongoose.model("user", userSchema);
+export default mongoose.model("Staff", staffSchema);

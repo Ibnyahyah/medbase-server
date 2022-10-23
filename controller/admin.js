@@ -4,7 +4,7 @@ dotenv.config();
 import bcrypt from "bcrypt";
 import Admin from "../model/admin.js";
 import Hospital from "../model/hospital.js";
-import User from "../model/userSchema.js";
+import staff from "../model/staff.js";
 import Patient from "../model/patient.js";
 import JWT from "jsonwebtoken";
 
@@ -31,7 +31,7 @@ export const signup = async (req, res) => {
 
     const accessToken = generateAccessToken({ result });
 
-    res.status(200).json({ message: 'User Successfully Register', accessToken: accessToken });
+    res.status(200).json({ message: 'Admin Successfully Register', token: accessToken });
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
   }
@@ -65,7 +65,7 @@ export const signin = async (req, res) => {
     // const accessToken = exitingUser;
     res
       .status(200)
-      .json({ message: 'User Successfully Logged in', accessToken: accessToken, refreshToken: refreshToken });
+      .json({ message: 'Admin Successfully Logged in', token: accessToken });
   } catch (err) {
     res.status(500).json("Something went wrong");
   }
@@ -86,7 +86,7 @@ function generateAccessToken(exitingUser) {
 export const getHospitals = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
     const hospitals = await Hospital.find();
@@ -100,7 +100,7 @@ export const getHospitals = async (req, res) => {
 export const getHospital = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
     const hospital = await Hospital.findById(req.params.id);
@@ -113,12 +113,13 @@ export const getHospital = async (req, res) => {
 
 export const revokeHospitalAccess = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
+  const { access } = req.body;
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
     const hospital = await Hospital.findByIdAndUpdate(req.params.id, {
-      access: false,
+      access: access,
     });
 
     res.status(200).json(hospital);
@@ -130,7 +131,7 @@ export const revokeHospitalAccess = async (req, res) => {
 export const deleteHospital = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
     const hospital = await Hospital.findByIdAndDelete(req.params.id);
@@ -141,27 +142,28 @@ export const deleteHospital = async (req, res) => {
   }
 }
 
-export const getStaff = async (req, res) => {
+export const getStaffs = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
-    const staff = await User.find();
+    const staffs = await staff.find();
 
-    res.status(200).json(staff);
+    res.status(200).json(staffs);
   } catch (err) {
     res.status(500).json({ message: "Something went wrong" });
+    console.log(err)
   }
 }
 
 export const getStaffById = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
-    const staff = await User.findById(req.params.id);
+    const staff = await staff.findById(req.params.id);
 
     res.status(200).json(staff);
   } catch (err) {
@@ -172,10 +174,10 @@ export const getStaffById = async (req, res) => {
 export const revokeStaffAccess = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
-    const staff = await User.findByIdAndUpdate(req.params.id, {
+    const staff = await staff.findByIdAndUpdate(req.params.id, {
       access: false,
     });
   } catch (err) {
@@ -186,10 +188,10 @@ export const revokeStaffAccess = async (req, res) => {
 export const deleteStaff = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
-    const staff = await User.findByIdAndDelete(req.params.id);
+    const staff = await staff.findByIdAndDelete(req.params.id);
 
     res.status(200).json(staff);
   } catch (err) {
@@ -200,7 +202,7 @@ export const deleteStaff = async (req, res) => {
 export const getPatients = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
 
   try {
@@ -215,7 +217,7 @@ export const getPatients = async (req, res) => {
 export const getPatient = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
     const patient = await Patient.findById(req.params.id);
@@ -229,7 +231,7 @@ export const getPatient = async (req, res) => {
 export const revokePatientAccess = async (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
     const patient = await Patient.findByIdAndUpdate(req.params.id, {
@@ -245,7 +247,7 @@ export const revokePatientAccess = async (req, res) => {
 export const deletePatient = (req, res) => {
   const token = req.headers.authorization.split(" ")[1];
   const decoded = JWT.verify(token, process.env.ACCESS_TOKEN_SECRET);
-  const { role } = decoded.role;
+  const { role } = decoded.exitingUser;
   if (role !== "admin") return res.status(401).json({ message: "Unauthorized" });
   try {
     Patient.findByIdAndDelete(req.params.id);

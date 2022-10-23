@@ -1,4 +1,4 @@
-import Record from "../model/record.js";
+import Record from "../model/patient.js";
 
 export const CreateRecord = async (req, res) => {
   const newRecord = new Record(req.body);

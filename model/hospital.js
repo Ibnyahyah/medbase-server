@@ -60,7 +60,23 @@ const HospitalSchema = new Mongoose.Schema({
         type: String,
         required: true
     },
-
+    access: {
+        type: Boolean,
+        default: false,
+    },
+    role: {
+        type: String,
+        enum: ['hospital'],
+        default: 'hospital',
+    },
+    patients: {
+        type: [String],
+        default: [],
+    },
+    staffs: {
+        type: [String],
+        default: [],
+    }
 },
     { timestamps: true }
 )

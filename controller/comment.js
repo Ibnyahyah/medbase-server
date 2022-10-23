@@ -1,5 +1,5 @@
 import Comment from '../model/comment.js';
-import Record from '../model/record.js'
+import Record from '../model/patient.js'
 
 export const getCommentPost = async (req, res) => {
     try {

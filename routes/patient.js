@@ -1,4 +1,4 @@
-import { CreateRecord, getRecords, getRecord } from "../controller/records.js";
+import { CreateRecord, getRecords, getRecord } from "../controller/patient.js";
 
 import { authenticationToken } from '../verification/index.js'
 import express from "express";
